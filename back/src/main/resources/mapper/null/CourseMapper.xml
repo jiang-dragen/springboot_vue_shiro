@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiang.back.mapper.CourseMapper">
+
+    <select id="selectThisCourses" resultType="com.jiang.back.entity.Course">
+        select *
+        from course
+        where course_status = 1
+        and not exists (select * from choose_course where user_id=#{userId} and course_id = course.course_id)
+    </select>
+
+    <select id="getChooseResult" resultType="com.jiang.back.entity.Course">
+        select course.course_id, course.course_code, course.course_name, course.course_type,
+               course.school_id, course.teacher_id, course.course_status, course.course_term_id,
+               course.course_term, course.course_time, course.course_place,
+               course.course_class, course.course_credit, course.usual_weight, course.end_weight
+        from course , choose_course , term
+        where course.course_id = choose_course.course_id
+            and course.course_term_id = term.term_id
+            and term_status = 1
+            and choose_status = 0 and user_id = #{userId}
+    </select>
+</mapper>
